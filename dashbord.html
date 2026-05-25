@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bethel Med24 — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --red:        #ff0000;
+      --red-dark:   #cc0000;
+      --red-light:  #fff0f0;
+      --bg:         #faf7f2;
+      --white:      #ffffff;
+      --text:       #2c2c2a;
+      --muted:      #7a7870;
+      --border:     #e8e4dd;
+      --shadow:     0 2px 16px rgba(44,44,42,.07);
+      --shadow-lg:  0 6px 32px rgba(44,44,42,.12);
+      --radius:     10px;
+      --font-head:  'Lora', Georgia, serif;
+      --font-body:  'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+
+    /* ━━━━ SIDEBAR ━━━━ */
+    .sidebar {
+      width: 220px; flex-shrink: 0; background: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      padding: 28px 0; position: fixed;
+      top: 0; left: 0; bottom: 0; z-index: 10;
+    }
+    .sidebar-logo {
+      font-family: var(--font-head); font-size: 15px; font-weight: 600;
+      padding: 0 20px 24px; border-bottom: 1px solid var(--border);
+      line-height: 1.4; display: flex; align-items: center; gap: 10px;
+    }
+    .sidebar-logo img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+    .sidebar-logo span { color: var(--red); }
+    .sidebar-label {
+      font-size: 10px; font-weight: 500; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--muted); opacity: .5;
+      padding: 20px 20px 8px;
+    }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px; font-size: 14px; font-weight: 500;
+      color: var(--muted); cursor: pointer; transition: all .15s;
+      border-left: 3px solid transparent; text-decoration: none;
+    }
+    .sidebar-link:hover { background: var(--bg); color: var(--text); }
+    .sidebar-link.active { color: var(--red); background: var(--red-light); border-left-color: var(--red); }
+    .sidebar-link svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .sidebar-bottom { margin-top: auto; padding: 20px; border-top: 1px solid var(--border); }
+    .sidebar-user { display: flex; align-items: center; gap: 10px; }
+    .sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--red-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sidebar-avatar svg { width: 16px; height: 16px; color: var(--red); }
+    .sidebar-user-name { font-size: 13px; font-weight: 500; }
+    .sidebar-user-role { font-size: 11px; color: var(--muted); }
+
+    /* ━━━━ MAIN ━━━━ */
+    .main { margin-left: 220px; flex: 1; padding: 32px; min-height: 100vh; }
+
+    /* ━━━━ TOP BAR ━━━━ */
+    .topbar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+    .topbar-title { font-family: var(--font-head); font-size: 24px; font-weight: 600; margin-bottom: 2px; }
+    .topbar-date { font-size: 13px; color: var(--muted); }
+    .topbar-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btn {
+      font-family: var(--font-body); font-size: 13px; font-weight: 500;
+      padding: 8px 18px; border-radius: 99px; border: 1.5px solid var(--border);
+      background: var(--white); color: var(--text); cursor: pointer; transition: all .15s;
+    }
+    .btn:hover { border-color: var(--red); color: var(--red); }
+    .btn-red { background: var(--red); color: #fff; border-color: var(--red); }
+    .btn-red:hover { background: var(--red-dark); color: #fff; border-color: var(--red-dark); }
+
+    /* ━━━━ NEW BOOKING BANNER ━━━━ */
+    .new-banner {
+      display: none; background: var(--red-light); border: 1px solid #ffb3b3;
+      border-radius: var(--radius); padding: 12px 18px; margin-bottom: 20px;
+      font-size: 14px; color: var(--red-dark); font-weight: 500;
+      align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .new-banner.show { display: flex; }
+    .new-banner button { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--red); font-family: var(--font-body); }
+
+    /* ━━━━ STATS ━━━━ */
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+    .stat-card-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .06em; }
+    .stat-card-num { font-family: var(--font-head); font-size: 30px; font-weight: 600; margin-bottom: 4px; }
+    .stat-card-sub { font-size: 12px; color: var(--muted); }
+    .stat-accent { border-top: 3px solid var(--red); }
+
+    /* ━━━━ FILTERS ━━━━ */
+    .filters { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+    .filter-tab {
+      font-family: var(--font-body); font-size: 13px; font-weight: 500;
+      padding: 6px 16px; border-radius: 99px; border: 1.5px solid var(--border);
+      background: var(--white); color: var(--muted); cursor: pointer; transition: all .15s;
+    }
+    .filter-tab:hover { border-color: var(--red); color: var(--red); }
+    .filter-tab.active { background: var(--red); color: #fff; border-color: var(--red); }
+    .search-wrap { margin-left: auto; position: relative; }
+    .search-input {
+      font-family: var(--font-body); font-size: 13px;
+      padding: 7px 14px 7px 34px; border: 1.5px solid var(--border);
+      border-radius: 99px; background: var(--white); outline: none;
+      color: var(--text); width: 200px; transition: border-color .2s;
+    }
+    .search-input:focus { border-color: var(--red); }
+    .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); opacity: .5; }
+    .search-icon svg { width: 14px; height: 14px; display: block; }
+
+    /* ━━━━ TABLE ━━━━ */
+    .table-wrap { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { border-bottom: 1px solid var(--border); background: var(--bg); }
+    thead th { text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 12px 16px; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--bg); }
+    tbody tr.new-row { background: #fff8f8; }
+    tbody td { padding: 14px 16px; font-size: 14px; }
+    .td-name { font-weight: 500; }
+    .td-muted { color: var(--muted); font-size: 13px; }
+    .td-notes { font-size: 12px; color: var(--muted); max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 99px; }
+    .badge-confirmed  { background: #e6f4ea; color: #1a6b30; }
+    .badge-pending    { background: #fff4e0; color: #8a5a00; }
+    .badge-cancelled  { background: #ffeaea; color: #8a0000; }
+    .badge-completed  { background: #e8edf4; color: #2b374a; }
+
+    .row-actions { display: flex; gap: 6px; }
+    .row-btn { font-family: var(--font-body); font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 99px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; }
+    .row-btn:hover { border-color: var(--red); color: var(--red); }
+    .row-btn.danger:hover { background: #ffeaea; border-color: #e57373; color: #cc0000; }
+
+    /* ━━━━ MODAL ━━━━ */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(44,44,42,.4); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: 16px; padding: 32px; max-width: 480px; width: 100%; box-shadow: var(--shadow-lg); position: relative; animation: fadeUp .2s ease; }
+    @keyframes fadeUp { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .modal-close { position: absolute; top: 14px; right: 14px; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); cursor: pointer; font-size: 14px; color: var(--muted); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); }
+    .modal-close:hover { background: var(--border); }
+    .modal h3 { font-family: var(--font-head); font-size: 20px; margin-bottom: 20px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: var(--font-body); font-size: 14px; color: var(--text); background: var(--bg); outline: none; transition: border-color .2s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--red); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 8px; justify-content: flex-end; }
+
+    /* ━━━━ EMPTY ━━━━ */
+    .empty-state { text-align: center; padding: 48px 20px; color: var(--muted); }
+    .empty-state svg { width: 40px; height: 40px; opacity: .3; margin: 0 auto 12px; display: block; }
+    .empty-state p { font-size: 14px; }
+
+    /* ━━━━ TOAST ━━━━ */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px); background: var(--text); color: #fff; padding: 11px 22px; border-radius: 99px; font-size: 13px; box-shadow: var(--shadow-lg); z-index: 999; transition: transform .3s ease; white-space: nowrap; font-family: var(--font-body); }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px; }
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 560px) {
+      .search-input { width: 140px; }
+      table { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="Logo.jpg" alt="Logo" onerror="this.style.display='none'"/>
+      Bethel<span>&nbsp;Med24</span>
+    </div>
+    <div class="sidebar-label">Main</div>
+    <a href="dashboard.html" class="sidebar-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Appointments
+    </a>
+    <a href="index.html" class="sidebar-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Website
+    </a>
+    <div class="sidebar-label">Other</div>
+    <div class="sidebar-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M5.34 5.34L3.93 3.93M12 20v2M12 2v2"/></svg>
+      Settings
+    </div>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+        </div>
+        <div>
+          <div class="sidebar-user-name">Administrator</div>
+          <div class="sidebar-user-role">Bethel Med24</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Appointments</div>
+        <div class="topbar-date" id="todayDate"></div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn" onclick="refreshFromStorage()">Refresh</button>
+        <button class="btn btn-red" onclick="openModal()">+ New appointment</button>
+      </div>
+    </div>
+
+    <!-- NEW BOOKING BANNER -->
+    <div class="new-banner" id="newBanner">
+      <span id="newBannerText"></span>
+      <button onclick="dismissBanner()">x</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card stat-accent">
+        <div class="stat-card-label">Today</div>
+        <div class="stat-card-num" id="statToday">0</div>
+        <div class="stat-card-sub">appointments scheduled</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Pending</div>
+        <div class="stat-card-num" id="statPending">0</div>
+        <div class="stat-card-sub">awaiting confirmation</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Confirmed</div>
+        <div class="stat-card-num" id="statConfirmed">0</div>
+        <div class="stat-card-sub">ready to go</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Total</div>
+        <div class="stat-card-num" id="statTotal">0</div>
+        <div class="stat-card-sub">all appointments</div>
+      </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <button class="filter-tab active" onclick="setFilter('all',this)">All</button>
+      <button class="filter-tab" onclick="setFilter('pending',this)">Pending</button>
+      <button class="filter-tab" onclick="setFilter('confirmed',this)">Confirmed</button>
+      <button class="filter-tab" onclick="setFilter('completed',this)">Completed</button>
+      <button class="filter-tab" onclick="setFilter('cancelled',this)">Cancelled</button>
+      <div class="search-wrap">
+        <div class="search-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <input class="search-input" type="text" placeholder="Search patient..." oninput="renderTable()" id="searchInput"/>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Reason</th>
+            <th>Doctor</th>
+            <th>Contact</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <p>No appointments found</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ADD APPOINTMENT MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeOnOverlay(event)">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">x</button>
+      <h3>New Appointment</h3>
+      <div class="form-row">
+        <div class="form-group"><label>First name</label><input type="text" id="fFirst" placeholder="Jane"/></div>
+        <div class="form-group"><label>Last name</label><input type="text" id="fLast" placeholder="Smith"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Phone</label><input type="tel" id="fPhone" placeholder="082 000 0000"/></div>
+        <div class="form-group"><label>Email</label><input type="email" id="fEmail" placeholder="jane@email.com"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input type="date" id="fDate"/></div>
+        <div class="form-group">
+          <label>Time</label>
+          <select id="fTime">
+            <option value="">Select</option>
+            <option>07:30</option><option>08:00</option><option>08:30</option>
+            <option>09:00</option><option>09:30</option><option>10:00</option>
+            <option>10:30</option><option>11:00</option><option>11:30</option>
+            <option>14:00</option><option>14:30</option><option>15:00</option>
+            <option>15:30</option><option>16:00</option><option>16:30</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Reason</label>
+        <select id="fReason">
+          <option value="">Select reason</option>
+          <option>General consultation</option>
+          <option>Follow-up visit</option>
+          <option>Child health check</option>
+          <option>Chronic disease review</option>
+          <option>Vaccination</option>
+          <option>Mental health support</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Doctor</label>
+        <select id="fDoctor">
+          <option>Dr. Sarah Maplewood</option>
+          <option>Dr. James Okafor</option>
+          <option>Dr. Priya Naidoo</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="fStatus">
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-red" onclick="addAppointment()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STORAGE_KEY = 'bethel_appointments';
+    const today = new Date().toISOString().split('T')[0];
+
+    document.getElementById('todayDate').textContent =
+      new Date().toLocaleDateString('en-ZA', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    document.getElementById('fDate').value = today;
+    document.getElementById('fDate').min   = today;
+
+    let appointments = [];
+    let activeFilter = 'all';
+    let lastCount    = 0;
+
+    // ━━━━ LOAD FROM LOCALSTORAGE ━━━━
+    function loadFromStorage() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    }
+
+    function saveToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appointments));
+    }
+
+    // ━━━━ REFRESH — picks up new bookings from website ━━━━
+    function refreshFromStorage() {
+      const stored = loadFromStorage();
+      const prev   = appointments.length;
+      appointments  = stored;
+      renderTable();
+      const diff = appointments.length - prev;
+      if (diff > 0) showToast(diff + ' new booking' + (diff > 1 ? 's' : '') + ' loaded');
+      else showToast('Up to date');
+    }
+
+    // ━━━━ AUTO-REFRESH every 10 seconds ━━━━
+    setInterval(() => {
+      const stored = loadFromStorage();
+      if (stored.length !== lastCount) {
+        const newOnes = stored.length - lastCount;
+        appointments  = stored;
+        lastCount     = stored.length;
+        renderTable();
+        if (newOnes > 0) {
+          const banner = document.getElementById('newBanner');
+          document.getElementById('newBannerText').textContent =
+            newOnes + ' new appointment' + (newOnes > 1 ? 's' : '') + ' received from the website!';
+          banner.classList.add('show');
+        }
+      }
+    }, 10000);
+
+    function dismissBanner() {
+      document.getElementById('newBanner').classList.remove('show');
+    }
+
+    // ━━━━ RENDER ━━━━
+    function renderTable() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const body   = document.getElementById('tableBody');
+      const empty  = document.getElementById('emptyState');
+
+      let filtered = appointments.filter(a => {
+        const matchFilter = activeFilter === 'all' || a.status === activeFilter;
+        const matchSearch = (a.first + ' ' + a.last).toLowerCase().includes(search);
+        return matchFilter && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        body.innerHTML = '';
+        empty.style.display = 'block';
+      } else {
+        empty.style.display = 'none';
+        // show newest first
+        const sorted = [...filtered].sort((a,b) => b.id - a.id);
+        body.innerHTML = sorted.map(a => `
+          <tr class="${a.isNew ? 'new-row' : ''}">
+            <td>
+              <div class="td-name">${a.first} ${a.last}</div>
+              ${a.phone ? `<div class="td-muted">${a.phone}</div>` : ''}
+            </td>
+            <td class="td-muted">${a.date ? formatDate(a.date) : '—'}</td>
+            <td class="td-muted">${a.time || '—'}</td>
+            <td class="td-muted">${a.reason || '—'}</td>
+            <td class="td-muted">${a.doctor || '—'}</td>
+            <td class="td-muted">${a.email || '—'}</td>
+            <td><span class="badge badge-${a.status}">${cap(a.status)}</span></td>
+            <td>
+              <div class="row-actions">
+                <button class="row-btn" onclick="cycleStatus(${a.id})">Update</button>
+                <button class="row-btn danger" onclick="deleteRow(${a.id})">Remove</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      updateStats();
+      lastCount = appointments.length;
+    }
+
+    function updateStats() {
+      const todayAppts = appointments.filter(a => a.date === today);
+      document.getElementById('statToday').textContent     = todayAppts.length;
+      document.getElementById('statPending').textContent   = appointments.filter(a => a.status === 'pending').length;
+      document.getElementById('statConfirmed').textContent = appointments.filter(a => a.status === 'confirmed').length;
+      document.getElementById('statTotal').textContent     = appointments.length;
+    }
+
+    function formatDate(d) {
+      try { return new Date(d + 'T00:00:00').toLocaleDateString('en-ZA', { day:'numeric', month:'short', year:'numeric' }); }
+      catch(e) { return d; }
+    }
+    function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+    // ━━━━ FILTER ━━━━
+    function setFilter(filter, el) {
+      activeFilter = filter;
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      renderTable();
+    }
+
+    // ━━━━ STATUS CYCLE ━━━━
+    function cycleStatus(id) {
+      const order = ['pending','confirmed','completed','cancelled'];
+      const a = appointments.find(x => x.id === id);
+      if (!a) return;
+      a.status = order[(order.indexOf(a.status) + 1) % order.length];
+      saveToStorage();
+      renderTable();
+      showToast('Status updated to ' + cap(a.status));
+    }
+
+    // ━━━━ DELETE ━━━━
+    function deleteRow(id) {
+      appointments = appointments.filter(a => a.id !== id);
+      saveToStorage();
+      renderTable();
+      showToast('Appointment removed');
+    }
+
+    // ━━━━ ADD FROM DASHBOARD ━━━━
+    function openModal() {
+      document.getElementById('modalOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function closeOnOverlay(e) {
+      if (e.target === document.getElementById('modalOverlay')) closeModal();
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    function addAppointment() {
+      const first  = document.getElementById('fFirst').value.trim();
+      const last   = document.getElementById('fLast').value.trim();
+      const phone  = document.getElementById('fPhone').value.trim();
+      const email  = document.getElementById('fEmail').value.trim();
+      const date   = document.getElementById('fDate').value;
+      const time   = document.getElementById('fTime').value;
+      const reason = document.getElementById('fReason').value;
+      const doctor = document.getElementById('fDoctor').value;
+      const status = document.getElementById('fStatus').value;
+
+      if (!first || !last || !date || !time || !reason) {
+        showToast('Please fill in all required fields'); return;
+      }
+
+      appointments.push({ id: Date.now(), first, last, phone, email, date, time, reason, doctor, status });
+      saveToStorage();
+      closeModal();
+      renderTable();
+      showToast('Appointment added');
+
+      // reset
+      ['fFirst','fLast','fPhone','fEmail','fTime'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('fReason').value = '';
+      document.getElementById('fStatus').value = 'pending';
+      document.getElementById('fDate').value   = today;
+    }
+
+    // ━━━━ TOAST ━━━━
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    // ━━━━ INIT ━━━━
+    appointments = loadFromStorage();
+    lastCount    = appointments.length;
+    renderTable();
+  </script>
+</body>
+</html>

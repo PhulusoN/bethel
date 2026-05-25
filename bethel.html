@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bethel 24med medical Practice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream:      #faf7f2;
+      --white:      #ffffff;
+      --sage:       #ff0000;
+      --sage-dark:  #ff0000;
+      --sage-light: #e8f0ea;
+      --text:       #2c2c2a;
+      --text-muted: #7a7870;
+      --border:     #e8e4dd;
+      --shadow:     0 2px 24px rgba(44,44,42,.07);
+      --shadow-lg:  0 8px 48px rgba(44,44,42,.12);
+      --radius:     12px;
+      --font-head:  'Lora', Georgia, serif;
+      --font-body:  'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); color: var(--text); background: var(--cream); font-size: 16px; line-height: 1.6; }
+    img  { display: block; max-width: 100%; }
+    a    { color: inherit; text-decoration: none; }
+    ul   { list-style: none; }
+
+    /* ━━━━ NAV ━━━━ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(250,247,242,.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 68px; transition: box-shadow .3s;
+    }
+    nav.scrolled { box-shadow: var(--shadow); }
+    .nav-logo { font-family: var(--font-head); font-size: 20px; font-weight: 600; display: flex; align-items: center; }
+    .nav-logo span { color: var(--sage); }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--text-muted); transition: color .2s; font-family: var(--font-body); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--sage); color: #fff !important;
+      padding: 9px 22px; border-radius: 99px;
+      font-size: 14px !important; font-weight: 500 !important;
+      transition: background .2s !important;
+    }
+    .nav-cta:hover { background: var(--sage-dark) !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
+    .mobile-menu { display: none; }
+
+    /* ━━━━ SHARED ━━━━ */
+    section { padding: 88px 5%; }
+    .section-tag {
+      display: inline-block; font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--sage); background: var(--sage-light);
+      padding: 5px 14px; border-radius: 99px; margin-bottom: 16px;
+      font-family: var(--font-body);
+    }
+    h1,h2,h3,h4 { font-family: var(--font-head); line-height: 1.2; }
+    h2 { font-size: clamp(28px,4vw,40px); font-weight: 600; margin-bottom: 16px; }
+    .section-intro { font-size: 17px; color: var(--text-muted); max-width: 560px; line-height: 1.7; font-family: var(--font-body); }
+
+    /* ━━━━ HERO ━━━━ */
+    #home {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 60px;
+      padding-top: 120px;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 70% at 80% 50%, #e8f0ea 0%, transparent 70%);
+      z-index: 0;
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 99px; padding: 6px 16px 6px 8px;
+      font-size: 13px; color: var(--text-muted); margin-bottom: 28px;
+      box-shadow: var(--shadow); font-family: var(--font-body);
+    }
+    .hero-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sage); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    h1 { font-size: clamp(36px,5vw,58px); font-weight: 600; line-height: 1.15; margin-bottom: 20px; }
+    h1 em { font-style: italic; color: var(--sage); }
+    .hero-sub { font-size: 17px; color: var(--text-muted); line-height: 1.7; margin-bottom: 36px; max-width: 480px; font-family: var(--font-body); }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--sage); color: #fff;
+      padding: 13px 28px; border-radius: 99px;
+      font-size: 15px; font-weight: 500; font-family: var(--font-body);
+      border: none; cursor: pointer; transition: background .2s, transform .15s;
+    }
+    .btn-primary:hover { background: var(--sage-dark); transform: translateY(-1px); }
+    .btn-outline {
+      background: transparent; color: var(--text);
+      padding: 13px 28px; border-radius: 99px;
+      font-size: 15px; font-weight: 500; font-family: var(--font-body);
+      border: 1.5px solid var(--border); cursor: pointer; transition: all .2s;
+    }
+    .btn-outline:hover { border-color: var(--sage); color: var(--sage); }
+    .hero-stats { display: flex; gap: 32px; margin-top: 48px; }
+    .stat-num { font-family: var(--font-head); font-size: 28px; font-weight: 600; }
+    .stat-label { font-size: 13px; color: var(--text-muted); font-family: var(--font-body); }
+
+    /* ━━━━ HERO SLIDESHOW ━━━━ */
+    .hero-image-wrap { position: relative; z-index: 1; }
+    .hero-slideshow {
+      border-radius: 20px; overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      aspect-ratio: 4/5; position: relative;
+      background: var(--sage-light);
+    }
+    .slide {
+      position: absolute; inset: 0;
+      opacity: 0; transition: opacity .8s ease;
+    }
+    .slide.active { opacity: 1; }
+    .slide img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .slide-dots {
+      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 6px;
+    }
+    .slide-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(44,44,42,.2); transition: background .3s;
+    }
+    .slide-dot.active { background: var(--sage); }
+
+    /* available badge */
+    .available-badge {
+      position: absolute; top: 20px; right: 20px;
+      background: var(--white); border-radius: 99px;
+      padding: 7px 16px; font-size: 13px; font-weight: 500;
+      color: var(--sage-dark); box-shadow: var(--shadow);
+      display: flex; align-items: center; gap: 6px;
+      font-family: var(--font-body);
+    }
+    .available-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sage); animation: pulse 2s infinite; }
+    .doctor-label {
+      position: absolute; bottom: 56px; left: 20px; right: 20px;
+      background: var(--white); border-radius: 12px;
+      padding: 14px 18px; box-shadow: var(--shadow-lg);
+    }
+    .doctor-label-name { font-family: var(--font-head); font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+    .doctor-label-title { font-size: 13px; color: var(--text-muted); font-family: var(--font-body); }
+
+    /* ━━━━ ABOUT ━━━━ */
+    #about { background: var(--white); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; margin-top: 56px; }
+    .about-image {
+      background: linear-gradient(135deg, var(--sage-light) 0%, #d0e4d4 100%);
+      border-radius: 20px; aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .about-image svg { width: 120px; height: 120px; color: var(--sage); opacity: .6; }
+    .about-image::after {
+      content: ''; position: absolute; inset: -8px; border-radius: 24px;
+      border: 2px dashed var(--border); z-index: -1;
+    }
+    .about-text p { color: var(--text-muted); line-height: 1.8; margin-bottom: 20px; font-family: var(--font-body); }
+    .credentials { display: flex; flex-direction: column; gap: 12px; margin-top: 28px; }
+    .credential { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-muted); font-family: var(--font-body); }
+    .credential-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sage); flex-shrink: 0; }
+
+    /* ━━━━ SERVICES ━━━━ */
+    #services { background: var(--cream); }
+    .services-header { margin-bottom: 48px; }
+    .services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .service-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px 28px;
+      transition: transform .2s, box-shadow .2s;
+      cursor: pointer;
+    }
+    .service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .service-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--sage-light); display: flex;
+      align-items: center; justify-content: center; margin-bottom: 20px;
+    }
+    .service-icon svg { width: 24px; height: 24px; color: var(--sage-dark); }
+    .service-card h3 { font-size: 18px; margin-bottom: 10px; }
+    .service-card p { font-size: 14px; color: var(--text-muted); line-height: 1.7; font-family: var(--font-body); }
+    .service-card .read-more { font-size: 13px; color: var(--sage); font-weight: 500; margin-top: 14px; display: inline-block; font-family: var(--font-body); }
+
+    /* ━━━━ SERVICE MODAL ━━━━ */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(44,44,42,.5); z-index: 200;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--white); border-radius: 20px;
+      padding: 40px; max-width: 520px; width: 100%;
+      box-shadow: var(--shadow-lg); position: relative;
+      animation: modalIn .2s ease;
+    }
+    @keyframes modalIn { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--cream);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: var(--text-muted); transition: all .15s;
+      font-family: var(--font-body);
+    }
+    .modal-close:hover { background: var(--border); }
+    .modal-icon { width: 56px; height: 56px; border-radius: 14px; background: var(--sage-light); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+    .modal-icon svg { width: 28px; height: 28px; color: var(--sage-dark); }
+    .modal h3 { font-size: 22px; margin-bottom: 12px; }
+    .modal-body { font-size: 15px; color: var(--text-muted); line-height: 1.8; font-family: var(--font-body); }
+    .modal-body ul { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .modal-body ul li { display: flex; align-items: flex-start; gap: 10px; }
+    .modal-body ul li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--sage); flex-shrink: 0; margin-top: 8px; }
+
+    /* ━━━━ TEAM ━━━━ */
+    #team { background: var(--white); }
+    .team-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; margin-top: 48px; }
+    .team-card {
+      background: var(--cream); border-radius: var(--radius);
+      padding: 32px 24px; text-align: center;
+      border: 1px solid var(--border); transition: box-shadow .2s;
+    }
+    .team-card:hover { box-shadow: var(--shadow); }
+    .team-avatar {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--sage-light), #c8dfc0);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px; border: 3px solid var(--white);
+    }
+    .team-avatar svg { width: 36px; height: 36px; color: var(--sage-dark); }
+    .team-name { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .team-role { font-size: 13px; color: var(--sage); font-weight: 500; margin-bottom: 12px; font-family: var(--font-body); }
+    .team-bio { font-size: 13px; color: var(--text-muted); line-height: 1.7; font-family: var(--font-body); }
+
+    /* ━━━━ BOOKING ━━━━ */
+    #book { background: var(--cream); }
+    .book-wrap { display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; align-items: start; margin-top: 48px; }
+    .book-info h3 { font-size: 22px; margin-bottom: 16px; }
+    .book-info p { color: var(--text-muted); line-height: 1.8; margin-bottom: 28px; font-family: var(--font-body); }
+    .hours-list { display: flex; flex-direction: column; gap: 10px; }
+    .hours-row { display: flex; justify-content: space-between; font-size: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-family: var(--font-body); }
+    .hours-row:last-child { border-bottom: none; }
+    .hours-day { font-weight: 500; }
+    .hours-time { color: var(--text-muted); }
+    .book-form { background: var(--white); border-radius: 16px; padding: 36px 32px; box-shadow: var(--shadow); }
+    .book-form h3 { font-size: 22px; margin-bottom: 24px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 7px; font-family: var(--font-body); }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-family: var(--font-body); font-size: 14px; color: var(--text);
+      background: var(--cream); outline: none; transition: border-color .2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--sage); }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+    .form-submit {
+      width: 100%; padding: 14px; background: var(--sage); color: #fff;
+      border: none; border-radius: 99px; font-size: 15px; font-weight: 500;
+      font-family: var(--font-body); cursor: pointer; transition: background .2s; margin-top: 4px;
+    }
+    .form-submit:hover { background: var(--sage-dark); }
+    .form-success { display: none; text-align: center; padding: 20px 0; }
+    .form-success h4 { font-size: 20px; margin-bottom: 8px; margin-top: 16px; }
+    .form-success p { color: var(--text-muted); font-size: 14px; font-family: var(--font-body); }
+    .success-icon { width: 56px; height: 56px; border-radius: 50%; background: var(--sage-light); display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+    .success-icon svg { width: 28px; height: 28px; color: var(--sage-dark); }
+
+    /* ━━━━ CONTACT ━━━━ */
+    #contact { background: var(--white); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 48px; }
+    .contact-cards { display: flex; flex-direction: column; gap: 16px; }
+    .contact-card { display: flex; align-items: flex-start; gap: 16px; background: var(--cream); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+    .contact-card-icon { width: 42px; height: 42px; border-radius: 10px; background: var(--sage-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .contact-card-icon svg { width: 20px; height: 20px; color: var(--sage-dark); }
+    .contact-card-label { font-size: 12px; color: var(--text-muted); margin-bottom: 3px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; font-family: var(--font-body); }
+    .contact-card-val { font-size: 15px; font-weight: 500; font-family: var(--font-body); }
+    .map-placeholder { background: var(--sage-light); border-radius: 16px; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; color: var(--sage); font-size: 14px; border: 1px solid var(--border); font-family: var(--font-body); overflow: hidden; }
+    .map-placeholder svg { width: 40px; height: 40px; opacity: .5; }
+    .map-placeholder iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+    /* ━━━━ FOOTER ━━━━ */
+    footer { background: var(--text); color: #a0a09e; padding: 48px 5%; font-size: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; font-family: var(--font-body); }
+    .footer-logo { font-family: var(--font-head); font-size: 18px; color: #fff; margin-bottom: 6px; }
+    .footer-logo span { color: var(--sage); }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { color: #a0a09e; transition: color .2s; }
+    .footer-links a:hover { color: #fff; }
+
+    /* ━━━━ TOAST ━━━━ */
+    .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--text); color: #fff; padding: 13px 24px; border-radius: 99px; font-size: 14px; box-shadow: var(--shadow-lg); z-index: 999; transition: transform .3s ease; white-space: nowrap; font-family: var(--font-body); }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ━━━━ RESPONSIVE ━━━━ */
+    @media (max-width: 900px) {
+      #home            { grid-template-columns: 1fr; padding-top: 100px; }
+      .hero-image-wrap { display: none; }
+      .about-grid      { grid-template-columns: 1fr; }
+      .services-grid   { grid-template-columns: repeat(2,1fr); }
+      .team-grid       { grid-template-columns: repeat(2,1fr); }
+      .book-wrap       { grid-template-columns: 1fr; }
+      .contact-grid    { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      section        { padding: 64px 5%; }
+      .nav-links     { display: none; }
+      .hamburger     { display: flex; }
+      .mobile-menu {
+        display: none; position: fixed; top: 68px; left: 0; right: 0;
+        background: var(--cream); border-bottom: 1px solid var(--border);
+        padding: 20px 5%; flex-direction: column; gap: 20px; z-index: 99;
+      }
+      .mobile-menu.open { display: flex; }
+      .mobile-menu a { font-size: 16px; font-weight: 500; font-family: var(--font-body); }
+      .services-grid { grid-template-columns: 1fr; }
+      .team-grid     { grid-template-columns: 1fr; }
+      .form-row      { grid-template-columns: 1fr; }
+      .hero-stats    { gap: 20px; flex-wrap: wrap; }
+    }
+
+    /* ━━━━ ABOUT SLIDESHOW ━━━━ */
+    .about-slideshow {
+      border-radius: 20px; overflow: hidden;
+      aspect-ratio: 1; position: relative;
+      box-shadow: var(--shadow-lg);
+    }
+    .about-slideshow::after {
+      content: ''; position: absolute;
+      inset: -8px; border-radius: 24px;
+      border: 2px dashed var(--border); z-index: -1;
+    }
+    .about-slide {
+      position: absolute; inset: 0;
+      opacity: 0; transition: opacity .8s ease;
+    }
+    .about-slide.active { opacity: 1; }
+    .about-slide img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .about-slide-dots {
+      position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 6px; z-index: 2;
+    }
+    .about-slide-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,.5); transition: background .3s;
+    }
+    .about-slide-dot.active { background: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-logo">
+      <img src="Logo.jpg" alt="Bethel Med24 Logo" style="height:40px;width:40px;object-fit:cover;border-radius:50%;margin-right:10px;"/>
+      Bethel<span> Med24</span> Medical Practice
+    </div>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#team">Our Team</a>
+      <a href="#contact">Contact</a>
+      <a href="#book" class="nav-cta">Book Appointment</a>
+      <a href="dashboard.html" style="font-size:13px;font-weight:500;color:var(--text-muted);font-family:var(--font-body);">Staff Login</a>
+    </div>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#home"     onclick="closeMenu()">Home</a>
+    <a href="#about"    onclick="closeMenu()">About</a>
+    <a href="#services" onclick="closeMenu()">Services</a>
+    <a href="#team"     onclick="closeMenu()">Our Team</a>
+    <a href="#contact"  onclick="closeMenu()">Contact</a>
+    <a href="#book"     onclick="closeMenu()" style="color:var(--sage);font-weight:600">Book Appointment</a>
+    <a href="dashboard.html" onclick="closeMenu()">Staff Login</a>
+  </div>
+
+  <!-- HERO -->
+  <section id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <h1>Care that feels like <em>family</em></h1>
+      <p class="hero-sub">
+        Compassionate, personalised healthcare for every stage of life.
+        We take the time to truly listen — because you deserve more than a rushed appointment.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">
+          Book an appointment
+        </button>
+        <button class="btn-outline" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">
+          Meet the team
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">20+</div>
+          <div class="stat-label">Years of care</div>
+        </div>
+        <div>
+          <div class="stat-num">4,800+</div>
+          <div class="stat-label">Patients served</div>
+        </div>
+        <div>
+          <div class="stat-num">5 Star</div>
+          <div class="stat-label">Patient rating</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HERO SLIDESHOW -->
+    <div class="hero-image-wrap">
+      <div class="hero-slideshow">
+        <div class="available-badge">
+          <div class="available-dot"></div>
+          Dr. Sarah Maplewood available
+        </div>
+        <div class="slide active"><img src="doc1.jpg" alt="Doctor 1" /></div>
+        <div class="slide"><img src="doc2.jpg" alt="Doctor 2" /></div>
+        <div class="slide"><img src="doc3.jpg" alt="Doctor 3" /></div>
+        <div class="slide"><img src="doc4.jpg" alt="Doctor 4" /></div>
+        <div class="slide"><img src="doc5.jpg" alt="Doctor 5" /></div>
+        <div class="doctor-label">
+          <div class="doctor-label-name">Bethel Med24 Medical Practice</div>
+          <div class="doctor-label-title">Compassionate care, every day</div>
+        </div>
+        <div class="slide-dots">
+          <div class="slide-dot active"></div>
+          <div class="slide-dot"></div>
+          <div class="slide-dot"></div>
+          <div class="slide-dot"></div>
+          <div class="slide-dot"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-tag">About us</div>
+    <h2>A practice built on trust and warmth</h2>
+    <div class="about-grid">
+      <div class="about-slideshow">
+        <div class="about-slide active"><img src="ambu1.jpg" alt="Practice image 1" /></div>
+        <div class="about-slide"><img src="ambu2.jpg" alt="Practice image 2" /></div>
+        <div class="about-slide"><img src="ambu3.jpg" alt="Practice image 3" /></div>
+        <div class="about-slide"><img src="ambu4.jpg" alt="Practice image 4" /></div>
+        <div class="about-slide-dots">
+          <div class="about-slide-dot active"></div>
+          <div class="about-slide-dot"></div>
+          <div class="about-slide-dot"></div>
+          <div class="about-slide-dot"></div>
+          <div class="about-slide-dot"></div>
+        </div>
+      </div>
+      <div class="about-text">
+        <div class="section-tag">Our story</div>
+        <h2>More than 20 years in your community</h2>
+        <p>
+          Maplewood Family Practice was founded with one simple belief: that every patient deserves unhurried, thoughtful care.
+          We are not a conveyor belt — we are your partners in health.
+        </p>
+        <p>
+          From newborns to grandparents, our team provides continuity of care across every chapter of your family's life.
+          We combine evidence-based medicine with genuine human connection.
+        </p>
+        <div class="credentials">
+          <div class="credential"><div class="credential-dot"></div>HPCSA-registered practitioners</div>
+          <div class="credential"><div class="credential-dot"></div>Affiliated with Maplewood General Hospital</div>
+          <div class="credential"><div class="credential-dot"></div>Bulk-billing and most medical aids accepted</div>
+          <div class="credential"><div class="credential-dot"></div>Same-day appointments available</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="services-header">
+      <div class="section-tag">What we offer</div>
+      <h2>Comprehensive family care</h2>
+      <p class="section-intro">From routine check-ups to chronic disease management, we cover it all under one roof. Tap any service to learn more.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card" onclick="openModal('consult')">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <h3>General Consultations</h3>
+        <p>Thorough assessments for illness, injury, and health concerns. We listen first, then treat.</p>
+        <span class="read-more">Learn more</span>
+      </div>
+      <div class="service-card" onclick="openModal('child')">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg></div>
+        <h3>Child and Infant Health</h3>
+        <p>Vaccinations, growth monitoring, developmental checks, and sick visits for your little ones.</p>
+        <span class="read-more">Learn more</span>
+      </div>
+      <div class="service-card" onclick="openModal('chronic')">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <h3>Chronic Disease Management</h3>
+        <p>Ongoing care plans for diabetes, hypertension, asthma, and other long-term conditions.</p>
+        <span class="read-more">Learn more</span>
+      </div>
+      <div class="service-card" onclick="openModal('preventive')">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <h3>Preventive Health Screens</h3>
+        <p>Cholesterol, blood pressure, cancer screenings and full annual health assessments.</p>
+        <span class="read-more">Learn more</span>
+      </div>
+      <div class="service-card" onclick="openModal('mental')">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg></div>
+        <h3>Mental Wellness</h3>
+        <p>Compassionate support for anxiety, depression, and stress. Referrals to specialists when needed.</p>
+        <span class="read-more">Learn more</span>
+      </div>
+      <div class="service-card" onclick="openModal('vaccines')">
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v2M14 2v2M10 20v2M14 20v2M4 10H2M4 14H2M22 10h-2M22 14h-2"/><rect x="8" y="6" width="8" height="12" rx="4"/></svg></div>
+        <h3>Vaccinations and Travel Health</h3>
+        <p>Routine immunisations plus travel medicine consultations and destination-specific vaccines.</p>
+        <span class="read-more">Learn more</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
+    <div class="modal" id="modal">
+      <button class="modal-close" onclick="closeModal()">x</button>
+      <div class="modal-icon" id="modalIcon"></div>
+      <h3 id="modalTitle"></h3>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- TEAM -->
+  <section id="team">
+    <div class="section-tag">Our team</div>
+    <h2>People who genuinely care</h2>
+    <p class="section-intro">Our practitioners bring decades of combined experience and a warm chair for every patient.</p>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg></div>
+        <div class="team-name">Dr. Sarah Maplewood</div>
+        <div class="team-role">Lead GP and Founder</div>
+        <div class="team-bio">MBChB (UCT), FCFP. 20 years in family medicine with a special interest in women's health and preventive care.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg></div>
+        <div class="team-name">Dr. James Okafor</div>
+        <div class="team-role">General Practitioner</div>
+        <div class="team-bio">MBChB (Wits), Dip. Paeds. Passionate about paediatric care and chronic disease management.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg></div>
+        <div class="team-name">Dr. Priya Naidoo</div>
+        <div class="team-role">General Practitioner</div>
+        <div class="team-bio">MBChB (UKZN), Dip. Mental Health. Specialises in mental wellness and adolescent health.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOK -->
+  <section id="book">
+    <div class="section-tag">Appointments</div>
+    <h2>Book your visit</h2>
+    <div class="book-wrap">
+      <div class="book-info">
+        <h3>Practice hours</h3>
+        <p>Walk-ins welcome during business hours. For urgent same-day needs, please call ahead.</p>
+        <div class="hours-list">
+          <div class="hours-row"><span class="hours-day">Monday – Friday</span><span class="hours-time">07:30 – 17:00</span></div>
+          <div class="hours-row"><span class="hours-day">Saturday</span><span class="hours-time">08:00 – 12:00</span></div>
+          <div class="hours-row"><span class="hours-day">Sunday</span><span class="hours-time">Closed</span></div>
+          <div class="hours-row"><span class="hours-day">Public Holidays</span><span class="hours-time">09:00 – 11:00</span></div>
+        </div>
+      </div>
+      <div class="book-form">
+        <h3>Request an appointment</h3>
+        <form id="bookingForm">
+          <div class="form-row">
+            <div class="form-group"><label>First name</label><input id="fFirst" type="text" placeholder="Jane" required /></div>
+            <div class="form-group"><label>Last name</label><input id="fLast" type="text" placeholder="Smith" required /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Phone number</label><input id="fPhone" type="tel" placeholder="082 000 0000" required /></div>
+            <div class="form-group"><label>Email address</label><input id="fEmail" type="email" placeholder="jane@email.com" required /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Preferred date</label><input id="fDate" type="date" required /></div>
+            <div class="form-group">
+              <label>Preferred time</label>
+              <select id="fTime">
+                <option value="">Select a slot</option>
+                <option>07:30 – 08:00</option><option>08:00 – 08:30</option>
+                <option>09:00 – 09:30</option><option>10:00 – 10:30</option>
+                <option>11:00 – 11:30</option><option>14:00 – 14:30</option>
+                <option>15:00 – 15:30</option><option>16:00 – 16:30</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Reason for visit</label>
+            <select id="fReason">
+              <option value="">Select a reason</option>
+              <option>General consultation</option><option>Follow-up visit</option>
+              <option>Child health check</option><option>Chronic disease review</option>
+              <option>Vaccination</option><option>Mental health support</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Additional notes (optional)</label>
+            <textarea id="fNotes" placeholder="Any symptoms or details you'd like us to know beforehand"></textarea>
+          </div>
+          <button type="submit" class="form-submit">Request appointment</button>
+        </form>
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h4>Request received!</h4>
+          <p>We will call you within 2 hours to confirm your appointment. See you soon.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-tag">Get in touch</div>
+    <h2>We are here when you need us</h2>
+    <div class="contact-grid">
+      <div class="contact-cards">
+        <div class="contact-card">
+          <div class="contact-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div>
+            <div class="contact-card-label">Address</div>
+            <div class="contact-card-val">Ext. 8, 41 Duncan St, eMalahleni, 1035</div>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.92 1.16h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 5.99 5.99l1.01-1.18a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2z"/></svg></div>
+          <div>
+            <div class="contact-card-label">Phone</div>
+            <div class="contact-card-val">061 549 1186</div>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div>
+            <div class="contact-card-label">Email</div>
+            <div class="contact-card-val">hello@Bethel.co.za</div>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 4v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+          <div>
+            <div class="contact-card-label">Parking</div>
+            <div class="contact-card-val">Free parking available on-site</div>
+          </div>
+        </div>
+      </div>
+      <div class="map-placeholder">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7179.6076669451!2d29.2195298!3d-25.875933!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1eeaedf59f7f53cd%3A0x68d3881a4747337e!2sBETHEL%20MED24%20-%2024%20Hour%20Medical%20Practice%20%7C%20Witbank%20eMalahleni!5e0!3m2!1sen!2sza!4v1779633523762!5m2!1sen!2sza" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>
+      <div class="footer-logo">Bethel<span> Med24</span> Medical Practice</div>
+      <div>© 2025 Bethel Med24 Medical Practice. All rights reserved.</div>
+    </div>
+    <div class="footer-links">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#book">Book</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast">Appointment request sent</div>
+
+  <script>
+    // ── nav scroll shadow
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // ── mobile menu
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+    function closeMenu() { mobileMenu.classList.remove('open'); }
+
+    // ── hero slideshow
+    const slides = document.querySelectorAll('.slide');
+    const dots   = document.querySelectorAll('.slide-dot');
+    let current  = 0;
+    setInterval(() => {
+      slides[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      current = (current + 1) % slides.length;
+      slides[current].classList.add('active');
+      dots[current].classList.add('active');
+    }, 4000);
+
+    // ── about slideshow
+    const aboutSlides = document.querySelectorAll('.about-slide');
+    const aboutDots   = document.querySelectorAll('.about-slide-dot');
+    let aboutCurrent  = 0;
+    setInterval(() => {
+      aboutSlides[aboutCurrent].classList.remove('active');
+      aboutDots[aboutCurrent].classList.remove('active');
+      aboutCurrent = (aboutCurrent + 1) % aboutSlides.length;
+      aboutSlides[aboutCurrent].classList.add('active');
+      aboutDots[aboutCurrent].classList.add('active');
+    }, 3000);
+
+    // ── service modal data
+    const modalData = {
+      consult: {
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+        title: 'General Consultations',
+        body: `<p>Our general consultations are thorough, unhurried assessments covering any illness, injury, or health concern you may have. We believe in listening before we prescribe.</p><ul><li>Full physical examination and symptom assessment</li><li>Diagnosis and personalised treatment plans</li><li>Referrals to specialists when necessary</li><li>Repeat prescriptions and medication reviews</li><li>Same-day appointments available for urgent needs</li></ul>`
+      },
+      child: {
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>',
+        title: 'Child and Infant Health',
+        body: `<p>We offer comprehensive care for children from birth through to adolescence, partnering with parents every step of the way.</p><ul><li>Newborn assessments and early developmental checks</li><li>Growth monitoring and weight charts</li><li>Full childhood vaccination schedules</li><li>Sick visits for common childhood illnesses</li><li>School readiness and learning difficulty assessments</li><li>Adolescent health and puberty consultations</li></ul>`
+      },
+      chronic: {
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+        title: 'Chronic Disease Management',
+        body: `<p>Living with a long-term condition requires consistent, expert support. We create personalised care plans that help you manage your condition and maintain your quality of life.</p><ul><li>Diabetes management and blood sugar monitoring</li><li>Hypertension and cardiovascular risk management</li><li>Asthma and COPD care plans</li><li>Thyroid and hormonal conditions</li><li>Regular reviews and medication adjustments</li><li>Lifestyle and dietary guidance</li></ul>`
+      },
+      preventive: {
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+        title: 'Preventive Health Screens',
+        body: `<p>Prevention is always better than cure. Our screening services help identify risks early so we can act before problems develop.</p><ul><li>Full annual health assessments</li><li>Cholesterol and lipid profile testing</li><li>Blood pressure and cardiovascular screening</li><li>Diabetes and blood glucose screening</li><li>Cancer screening referrals (cervical, breast, prostate, colorectal)</li><li>Vision and hearing checks</li></ul>`
+      },
+      mental: {
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>',
+        title: 'Mental Wellness',
+        body: `<p>Mental health is health. We provide a safe, non-judgemental space to talk about what you are going through, and connect you with the right support.</p><ul><li>Assessments for anxiety and depression</li><li>Stress management and burnout support</li><li>Medication management when appropriate</li><li>Referrals to psychologists and psychiatrists</li><li>Support for grief, trauma, and life transitions</li><li>Adolescent and young adult mental health</li></ul>`
+      },
+      vaccines: {
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v2M14 2v2M10 20v2M14 20v2M4 10H2M4 14H2M22 10h-2M22 14h-2"/><rect x="8" y="6" width="8" height="12" rx="4"/></svg>',
+        title: 'Vaccinations and Travel Health',
+        body: `<p>Whether you are keeping up with routine immunisations or preparing for international travel, we have you covered with up-to-date vaccines and expert advice.</p><ul><li>Adult and childhood routine vaccinations</li><li>Flu shots and pneumonia vaccines</li><li>Pre-travel health consultations</li><li>Destination-specific vaccine recommendations</li><li>Malaria prophylaxis advice</li><li>Yellow fever and typhoid vaccinations</li></ul>`
+      }
+    };
+
+    function openModal(key) {
+      const data = modalData[key];
+      document.getElementById('modalIcon').innerHTML  = data.icon;
+      document.getElementById('modalTitle').innerText = data.title;
+      document.getElementById('modalBody').innerHTML  = data.body;
+      document.getElementById('modalOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function closeModalOnOverlay(e) {
+      if (e.target === document.getElementById('modalOverlay')) closeModal();
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // ── min date
+    const dateInput = document.getElementById('fDate');
+    if (dateInput) dateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
+
+    // ── booking form — saves to localStorage + notifies dashboard instantly
+    const form    = document.getElementById('bookingForm');
+    const success = document.getElementById('formSuccess');
+    const toast   = document.getElementById('toast');
+    const bc      = new BroadcastChannel('bethel_appts');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const appt = {
+        id:     Date.now(),
+        first:  document.getElementById('fFirst').value.trim() || 'Patient',
+        last:   document.getElementById('fLast').value.trim()  || '',
+        phone:  document.getElementById('fPhone').value.trim(),
+        email:  document.getElementById('fEmail').value.trim(),
+        date:   document.getElementById('fDate').value,
+        time:   document.getElementById('fTime').value,
+        reason: document.getElementById('fReason').value || 'General consultation',
+        notes:  document.getElementById('fNotes').value.trim(),
+        doctor: 'Dr. Sarah Maplewood',
+        status: 'pending'
+      };
+
+      // save to localStorage
+      const existing = JSON.parse(localStorage.getItem('bethel_appointments') || '[]');
+      existing.push(appt);
+      localStorage.setItem('bethel_appointments', JSON.stringify(existing));
+
+      // fire instantly to dashboard tab
+      bc.postMessage({ type: 'NEW_APPOINTMENT', appt });
+
+      form.style.display = 'none';
+      success.style.display = 'block';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    });
+  </script>
+</body>
+</html>
